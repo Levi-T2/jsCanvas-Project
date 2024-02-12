@@ -35,8 +35,32 @@ export class Sprite {
     }
 
     drawImage(ctx, x, y) {
+        // Recreates the is loaded check to ensure the image being drawn has been loaded.
         if (!this.resource.isLoaded) {
             return;
         }
+        // Next, we will look through the frame position to find the correct sprite sheet frame to use.
+        let frameCoordX = 0;
+        let frameCoordY = 0;
+        const frame = this.frameMap.get(this.frame); // This will dynamically look up what was stored in the frame map above.
+        if (frame) {
+            frameCoordX = frame.x;
+            frameCoordY = frame.y;
+        }
+        // This if statement above will assign these variables the frame value that we pass through.
+        const frameSizeX = this.frameSize.x;
+        const frameSizeY = this.frameSize.y;
+        // The above variables are grabbed from the frame size that we declare and re-assigned to these frame variables to use.
+        ctx.drawImage(
+            this.resource.image, // Passes through an instance of an image that we will be grabbing pixels from.
+            frameCoordX, // Top X corner of the frame.
+            frameCoordY, // Top Y corner of the frame.
+            frameSizeX, // How much to crop out of the sprite sheet (x).
+            frameSizeY, // How much to crop out of the sprite sheet (y).
+            x, // Where to place the sprite on the canvas tag X (0).
+            y, // Where to place the sprite on the canvas tag Y (0).
+            frameSizeX * this.scale, // How large to scale it on the x axis.
+            frameSizeY * this.scale, // How large to scale it on the y axis.
+        )
     }
 }
