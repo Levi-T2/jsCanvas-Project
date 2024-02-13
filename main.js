@@ -7,6 +7,9 @@ import { DOWN, Input, LEFT, RIGHT, UP } from './src/Input.js';
 import { gridCells, isSpaceFree } from './src/helpers/Grid.js';
 import { moveTowards } from './src/helpers/MoveTowards.js';
 import { walls } from './src/levels/level1.js';
+import { Animations } from './src/Animations.js';
+import { FrameIndexPattern } from './src/FrameIndexPattern.js';
+import { STAND_DOWN, STAND_LEFT, STAND_RIGHT, STAND_UP, WALK_DOWN, WALK_LEFT, WALK_RIGHT, WALK_UP } from './src/objects/Hero/heroAnimations.js';
 
 const canvas = document.querySelector("#game-canvas");
 const ctx = canvas.getContext("2d");
@@ -27,7 +30,17 @@ const hero = new Sprite({
   hFrames: 3,
   vFrames: 8,
   frame: 1, // This value will change the frame from the sprite sheet that the hero is drawn from.
-  position: new Vector2(gridCells(6), gridCells(5)) // User our grid cell helper allows for better positioning of the hero.
+  position: new Vector2(gridCells(6), gridCells(5)), // User our grid cell helper allows for better positioning of the hero.
+  animations: new Animations({
+    walkDown: new FrameIndexPattern(WALK_DOWN),
+    walkUp: new FrameIndexPattern(WALK_UP),
+    walkLeft: new FrameIndexPattern(WALK_LEFT),
+    walkRight: new FrameIndexPattern(WALK_RIGHT),
+    standDown: new FrameIndexPattern(STAND_DOWN),
+    standUp: new FrameIndexPattern(STAND_UP),
+    standLeft: new FrameIndexPattern(STAND_LEFT),
+    standRight: new FrameIndexPattern(STAND_RIGHT),
+  })
 })
 
 const heroDestinationPosition = hero.position.duplicate();
@@ -39,7 +52,7 @@ const shadow = new Sprite({
 
 const input = new Input();
 
-const update = () => {
+const update = (delta) => {
   // Updating entities in the game.
 
   const distance = moveTowards(hero, heroDestinationPosition, 1);
@@ -48,6 +61,8 @@ const update = () => {
   if (hasArrived) {
     tryMove();
   }
+  // Hero Animations
+  hero.step(delta);
 };
 
 const tryMove = () => {

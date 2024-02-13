@@ -9,6 +9,7 @@ export class Sprite {
         frame, // Which frame we want to be shown
         scale, // How large to draw the image
         position, // Where to draw the image
+        animations, // Used for pulling out the right frame for the current sprite
     }) {
         this.resource = resource;
         this.frameSize = frameSize ?? new Vector2(16, 16); // Set to 16x16 as the majority of sprites are 16 pixels
@@ -17,7 +18,8 @@ export class Sprite {
         this.frame = frame ?? 0;
         this.frameMap = new Map();
         this.scale = scale ?? 1;
-        this.position = position ?? new Vector2(0, 0)
+        this.position = position ?? new Vector2(0, 0);
+        this.animations = animations ?? null;
         this.buildFrameMap();
     }
 
@@ -32,6 +34,14 @@ export class Sprite {
                 frameCount++;
             }
         }
+    }
+
+    step(delta) {
+        if (!this.animations) {
+            return;
+        }
+        this.animations.step(delta);
+        this.frame = this.animations.frame;
     }
 
     drawImage(ctx, x, y) {
